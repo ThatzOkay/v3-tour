@@ -22,7 +22,7 @@ Then import the plugin in your application entry point (typically main.js if you
 Also don't forget to include the styles. You can add the styles provided by default or customize them to your own liking.
 
 ```javascript
-import {createApp} from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import VueTour from 'v3-tour'
 
