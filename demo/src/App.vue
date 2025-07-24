@@ -2,7 +2,7 @@
   <div class="section section-hero bg-gray">
     <div id="overview" class="grid-hero container grid-lg text-center">
       <div class="docs-brand">
-        <a href="#" @click="tour.start()" class="docs-logo" id="v-step-0">
+        <a href="#" @click="tour?.start()" class="docs-logo" id="v-step-0">
           <img src="./assets/logo.png" alt="Vue Tour">
           <h2>VUE TOUR</h2>
         </a>
@@ -176,12 +176,12 @@
 
 <script setup lang="ts">
 import {onMounted, ref, useTemplateRef} from "vue";
-import { VTour, VStep, VTourExpose } from "../../src/main";
+import { VTour, VStep, VTourExpose, Step, Callbacks } from "../../src/main";
 import {Tour} from "../../types";
 
 const version = '3.0.0';
 
-const steps = [
+const steps: Step[] = [
   {
     target: '#v-step-0',
     content: `Discover <strong>Vue Tour</strong>!`,
@@ -235,9 +235,9 @@ const startTour = () => {
   tour.value?.start();
 }
 
-const callbacks = {
-  previousStep: myCustomPreviousStepCallback,
-  nextStep: myCustomNextStepCallback
+const callbacks: Callbacks = {
+  onPreviousStep: myCustomPreviousStepCallback,
+  onNextStep: myCustomNextStepCallback
 }
 
 const tour = useTemplateRef<VTourExpose>('tour')
@@ -256,6 +256,10 @@ const nextStep = () => {
 }
 
 const showLastStep = () => {
+  if (!tour.value) {
+    console.error('[Vue Tour] Tour instance is not available');
+    return;
+  }
   tour.value.currentStep = steps.length - 1
 }
 </script>

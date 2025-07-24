@@ -153,7 +153,7 @@ const previousStep = async () => {
 
   const process = () => new Promise<void>((resolve) => {
     if(customCallbacks.value.onPreviousStep) {
-      customCallbacks.value.onPreviousStep(props.steps[currentStep.value]);
+      customCallbacks.value.onPreviousStep(currentStep.value);
     }
     currentStep.value = futureStep;
     resolve();
@@ -179,7 +179,7 @@ const nextStep = async () => {
 
   const process = () => new Promise<void>((resolve) => {
     if(customCallbacks.value.onNextStep) {
-      customCallbacks.value.onNextStep(props.steps[currentStep.value]);
+      customCallbacks.value.onNextStep(currentStep.value);
     }
     currentStep.value = futureStep;
     resolve();

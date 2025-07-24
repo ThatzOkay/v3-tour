@@ -15,10 +15,10 @@
 
     <slot name="actions">
       <div class="v-step__buttons">
-        <button @click.prevent="skip" v-if="!isLast && isButtonEnabled('buttonSkip')" class="v-step__button v-step__button-skip">{{ params.labels.buttonSkip }}</button>
-        <button @click.prevent="previousStep" v-if="!isFirst && isButtonEnabled('buttonPrevious')" class="v-step__button v-step__button-previous">{{ params.labels.buttonPrevious }}</button>
-        <button @click.prevent="nextStep" v-if="!isLast && isButtonEnabled('buttonNext')" class="v-step__button v-step__button-next">{{ params.labels.buttonNext }}</button>
-        <button @click.prevent="finish" v-if="isLast && isButtonEnabled('buttonStop')" class="v-step__button v-step__button-stop">{{ params.labels.buttonStop }}</button>
+        <button @click.prevent="skip" v-if="!isLast && isButtonEnabled('buttonSkip')" class="v-step__button v-step__button-skip">{{ params.labels?.buttonSkip }}</button>
+        <button @click.prevent="previousStep" v-if="!isFirst && isButtonEnabled('buttonPrevious')" class="v-step__button v-step__button-previous">{{ params.labels?.buttonPrevious }}</button>
+        <button @click.prevent="nextStep" v-if="!isLast && isButtonEnabled('buttonNext')" class="v-step__button v-step__button-next">{{ params.labels?.buttonNext }}</button>
+        <button @click.prevent="finish" v-if="isLast && isButtonEnabled('buttonStop')" class="v-step__button v-step__button-stop">{{ params.labels?.buttonStop }}</button>
       </div>
     </slot>
 
@@ -53,11 +53,11 @@ const props = defineProps<{
   finish?: () => void,
   isFirst: boolean,
   isLast: boolean,
-  labels: {
-    buttonSkip: string,
-    buttonPrevious: string,
-    buttonNext: string,
-    buttonStop: string
+  labels?: {
+    buttonSkip?: string;
+    buttonPrevious?: string;
+    buttonNext?: string;
+    buttonStop?: string;
   },
   enabledButtons?: {
     buttonSkip?: boolean,
@@ -65,7 +65,7 @@ const props = defineProps<{
     buttonNext?: boolean,
     buttonStop?: boolean
   },
-  highlight: boolean,
+  highlight?: boolean,
   stopOnFail?: boolean,
   debug?: boolean,
   ionic?: boolean,
