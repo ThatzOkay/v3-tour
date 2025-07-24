@@ -1,7 +1,6 @@
 import './vue';
-import Vue from 'vue';
 
-export function install (vue: any): void
+export function install (vue: Vue): void
 
 export interface Tour {
   // Methods

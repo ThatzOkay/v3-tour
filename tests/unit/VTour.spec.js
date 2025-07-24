@@ -1,5 +1,5 @@
 import { mount, shallowMount } from '@vue/test-utils'
-import VueTour from '@/main'
+import VueTour from '@/main.ts'
 import VTour from '@/components/VTour.vue'
 
 const steps = [

@@ -1,5 +1,5 @@
 <template>
-  <div v-bind:class="{ 'v-step--sticky': isSticky }" class="v-step" :id="'v-step-' + hash" :ref="'v-step-' + hash">
+  <div v-bind:class="{ 'v-step--sticky': isSticky }" class="v-step" :style="styles" :id="'v-step-' + hash" ref="stepRef">
     <slot name="header">
       <div v-if="step.header" class="v-step__header">
         <div v-if="step.header.title" v-html="step.header.title"></div>
@@ -15,10 +15,10 @@
 
     <slot name="actions">
       <div class="v-step__buttons">
-        <button @click.prevent="skip" v-if="!isLast && isButtonEnabled('buttonSkip')" class="v-step__button v-step__button-skip">{{ labels.buttonSkip }}</button>
-        <button @click.prevent="previousStep" v-if="!isFirst && isButtonEnabled('buttonPrevious')" class="v-step__button v-step__button-previous">{{ labels.buttonPrevious }}</button>
-        <button @click.prevent="nextStep" v-if="!isLast && isButtonEnabled('buttonNext')" class="v-step__button v-step__button-next">{{ labels.buttonNext }}</button>
-        <button @click.prevent="finish" v-if="isLast && isButtonEnabled('buttonStop')" class="v-step__button v-step__button-stop">{{ labels.buttonStop }}</button>
+        <button @click.prevent="skip" v-if="!isLast && isButtonEnabled('buttonSkip')" class="v-step__button v-step__button-skip">{{ params.labels.buttonSkip }}</button>
+        <button @click.prevent="previousStep" v-if="!isFirst && isButtonEnabled('buttonPrevious')" class="v-step__button v-step__button-previous">{{ params.labels.buttonPrevious }}</button>
+        <button @click.prevent="nextStep" v-if="!isLast && isButtonEnabled('buttonNext')" class="v-step__button v-step__button-next">{{ params.labels.buttonNext }}</button>
+        <button @click.prevent="finish" v-if="isLast && isButtonEnabled('buttonStop')" class="v-step__button v-step__button-stop">{{ params.labels.buttonStop }}</button>
       </div>
     </slot>
 
@@ -26,208 +26,242 @@
   </div>
 </template>
 
-<script>
-import { createPopper } from '@popperjs/core'
+<script setup lang="ts">
+import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {DEFAULT_STEP_OPTIONS, HIGHLIGHT} from "../shared/constants";
 import jump from 'jump.js'
-import sum from 'hash-sum'
-import { DEFAULT_STEP_OPTIONS, HIGHLIGHT } from '../shared/constants'
+import {
+  autoPlacement,
+  autoUpdate,
+  computePosition, flip,
+  offset,
+  shift,
+  useFloating,
+  UseFloatingOptions
+} from "@floating-ui/vue";
+import {ButtonName} from "../shared/types";
+import {Step} from "../shared/types";
+import {createPopper} from "@popperjs/core";
+import {Placement} from "@popperjs/core/lib/enums";
 
-export default {
-  name: 'v-step',
-  props: {
-    step: {
-      type: Object
-    },
-    previousStep: {
-      type: Function
-    },
-    nextStep: {
-      type: Function
-    },
-    stop: {
-      type: Function
-    },
-    skip: {
-      type: Function,
-      default: function () {
-        this.stop()
+const props = defineProps<{
+  step: Step,
+  previousStep: () => void,
+  nextStep: () => void,
+  stop: () => void,
+  skip?: () => void,
+  finish?: () => void,
+  isFirst: boolean,
+  isLast: boolean,
+  labels: {
+    buttonSkip: string,
+    buttonPrevious: string,
+    buttonNext: string,
+    buttonStop: string
+  },
+  enabledButtons?: {
+    buttonSkip?: boolean,
+    buttonPrevious?: boolean,
+    buttonNext?: boolean,
+    buttonStop?: boolean
+  },
+  highlight: boolean,
+  stopOnFail?: boolean,
+  debug?: boolean,
+  ionic?: boolean,
+}>()
+
+let styles = ref();
+
+watch(styles , (newStyles) => {
+  if (props.debug) {
+    console.log('[Vue Tour] Floating styles for .v-step[id="' + hash.value + '"]:', newStyles);
+  }
+})
+
+const hash = ref(props.step.target);
+const targetElement = ref(typeof props.step.target === "string" ? document.querySelector(props.step.target) as HTMLBRElement | null : props.step.target as HTMLBRElement | null);
+const stepRef = ref<HTMLElement | null>(null)
+
+const params = computed(() => {
+  return {
+    ...DEFAULT_STEP_OPTIONS,
+    ...{ highlight: props.highlight }, // Use global tour highlight setting first
+    ...{ enabledButtons: Object.assign({}, props.enabledButtons) },
+    ...{ labels: props.labels },
+    ...props.step.params // Then use local step parameters if defined
+  }
+})
+
+const isSticky = computed(() => {
+  return !props.step.target;
+})
+
+const createStep = () => {
+  if (props.debug) {
+    console.log('[Vue Tour] The target element ' + props.step.target + ' of .v-step[id="' + hash.value + '"] is:', targetElement.value)
+    console.log('[Vue Tour] The step element .v-step[id="' + hash.value + '"] is:', stepRef.value)
+  }
+
+  if (isSticky.value && stepRef.value) {
+    document.body.appendChild(stepRef.value)
+  } else {
+    if (targetElement.value && stepRef.value) {
+      enableScrolling()
+      createHighlight()
+
+      createPopper(
+        targetElement.value,
+        stepRef.value,
+        {
+          modifiers: params.value.modifiers,
+        }
+      )
+
+    } else {
+      if (props.debug) {
+        console.error('[Vue Tour] The target element ' + props.step.target + ' of .v-step[id="' + hash.value + '"] does not exist!')
       }
-    },
-    finish: {
-      type: Function,
-      default: function () {
-        this.stop()
+      emit('targetNotFound', props.step)
+      if (props.stopOnFail) {
+        stop()
       }
-    },
-    isFirst: {
-      type: Boolean
-    },
-    isLast: {
-      type: Boolean
-    },
-    labels: {
-      type: Object
-    },
-    enabledButtons: {
-      type: Object
-    },
-    highlight: {
-      type: Boolean
-    },
-    stopOnFail: {
-      type: Boolean
-    },
-    debug: {
-      type: Boolean
-    },
-    ionic: {
-      type: Boolean
     }
-  },
-  data () {
-    return {
-      hash: sum(this.step.target),
-      targetElement: document.querySelector(this.step.target)
-    }
-  },
-  computed: {
-    params () {
-      return {
-        ...DEFAULT_STEP_OPTIONS,
-        ...{ highlight: this.highlight }, // Use global tour highlight setting first
-        ...{ enabledButtons: Object.assign({}, this.enabledButtons) },
-        ...this.step.params // Then use local step parameters if defined
-      }
-    },
-    /**
-     * A step is considered sticky if it has no target.
-     */
-    isSticky () {
-      return !this.step.target
-    }
-  },
-  methods: {
-    createStep () {
-      if (this.debug) {
-        console.log('[Vue Tour] The target element ' + this.step.target + ' of .v-step[id="' + this.hash + '"] is:', this.targetElement)
-      }
-
-      if (this.isSticky) {
-        document.body.appendChild(this.$refs['v-step-' + this.hash])
-      } else {
-        if (this.targetElement) {
-          this.enableScrolling()
-          this.createHighlight()
-
-          createPopper(
-            this.targetElement,
-            this.$refs['v-step-' + this.hash],
-            this.params
-          )
-        } else {
-          if (this.debug) {
-            console.error('[Vue Tour] The target element ' + this.step.target + ' of .v-step[id="' + this.hash + '"] does not exist!')
-          }
-          this.$emit('targetNotFound', this.step)
-          if (this.stopOnFail) {
-            this.stop()
-          }
-        }
-      }
-    },
-    enableScrolling () {
-      if (this.params.enableScrolling) {
-        if (this.step.duration || this.step.offset) {
-          let jumpOptions = {
-            duration: this.step.duration || 1000,
-            offset: this.step.offset || 0,
-            callback: undefined,
-            a11y: false
-          }
-
-          !this.ionic ? jump(this.targetElement, jumpOptions) : this.ionicScroll(jumpOptions)
-        } else {
-          // Use the native scroll by default if no scroll options has been defined
-          this.targetElement.scrollIntoView({ behavior: 'smooth' })
-        }
-      }
-    },
-    isHighlightEnabled () {
-      if (this.debug) {
-        console.log(`[Vue Tour] Highlight is ${this.params.highlight ? 'enabled' : 'disabled'} for .v-step[id="${this.hash}"]`)
-      }
-      return this.params.highlight
-    },
-    createHighlight () {
-      if (this.isHighlightEnabled()) {
-        document.body.classList.add(HIGHLIGHT.classes.active)
-        const transitionValue = window.getComputedStyle(this.targetElement).getPropertyValue('transition')
-
-        // Make sure our background doesn't flick on transitions
-        if (transitionValue !== 'all 0s ease 0s') {
-          this.targetElement.style.transition = `${transitionValue}, ${HIGHLIGHT.transition}`
-        }
-
-        this.targetElement.classList.add(HIGHLIGHT.classes.targetHighlighted)
-        // The element must have a position, if it doesn't have one, add a relative position class
-        if (!this.targetElement.style.position) {
-          this.targetElement.classList.add(HIGHLIGHT.classes.targetRelative)
-        }
-      } else {
-        document.body.classList.remove(HIGHLIGHT.classes.active)
-      }
-    },
-    removeHighlight () {
-      if (this.isHighlightEnabled()) {
-        const target = this.targetElement
-        const currentTransition = this.targetElement.style.transition
-        this.targetElement.classList.remove(HIGHLIGHT.classes.targetHighlighted)
-        this.targetElement.classList.remove(HIGHLIGHT.classes.targetRelative)
-        // Remove our transition when step is finished.
-        if (currentTransition.includes(HIGHLIGHT.transition)) {
-          setTimeout(() => {
-            target.style.transition = currentTransition.replace(`, ${HIGHLIGHT.transition}`, '')
-          }, 0)
-        }
-      }
-    },
-    isButtonEnabled (name) {
-      return this.params.enabledButtons.hasOwnProperty(name) ? this.params.enabledButtons[name] : true
-    },
-    getOffset (jumpOptions) {
-      const elemRect = this.targetElement.getBoundingClientRect()
-      let offset = elemRect.top
-      if (jumpOptions.offset) {
-        offset += jumpOptions.offset
-      }
-
-      return offset
-    },
-    getIonContent () {
-      const pages = document.getElementsByClassName('ion-page')
-      if (pages.length) {
-        const elByZIndexes = {}
-        for (const el of pages) {
-          const styles = window.getComputedStyle(el)
-          elByZIndexes[styles['z-index']] = el.querySelector('ion-content')
-        }
-
-        const maxZIndex = Math.max(...Object.keys(elByZIndexes).map(value => +value))
-        return { el: elByZIndexes[maxZIndex], pages: Object.keys(elByZIndexes).length }
-      }
-    },
-    ionicScroll (jumpOptions) {
-      const offset = this.getOffset(jumpOptions)
-      this.getIonContent().el.scrollByPoint(0, offset, this.step.duration || 1000)
-    }
-  },
-  mounted () {
-    this.createStep()
-  },
-  unmounted () {
-    this.removeHighlight()
   }
 }
+
+const enableScrolling = () => {
+  if (params.value.enableScrolling) {
+    if (props.step.params && props.step.params.duration || props.step.params && props.step.params.offset) {
+      let jumpOptions = {
+        duration: props.step.params.duration || 1000,
+        offset: props.step.params.offset || 0,
+        callback: undefined,
+        a11y: false
+      }
+    if(targetElement.value)
+        !props.ionic ? jump(targetElement.value, jumpOptions) : ionicScroll(jumpOptions)
+    } else {
+      // Use the native scroll by default if no scroll options has been defined
+      targetElement.value?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+}
+
+const isHighlightEnabled = () => {
+  if (props.debug) {
+    console.log(`[Vue Tour] Highlight is ${params.value.highlight ? 'enabled' : 'disabled'} for .v-step[id="${hash.value}"]`)
+  }
+  return params.value.highlight
+}
+
+const createHighlight = () => {
+  if (isHighlightEnabled()) {
+    document.body.classList.add(HIGHLIGHT.classes.active)
+    const element = targetElement.value as Element | null;
+    if (!element || !targetElement.value) {
+      console.error('[Vue Tour] Target element not found for highlight.');
+      return;
+    }
+    const transitionValue = window.getComputedStyle(element).getPropertyValue('transition')
+
+    // Make sure our background doesn't flick on transitions
+    if (transitionValue !== 'all 0s ease 0s') {
+      targetElement.value.style.transition = `${transitionValue}, ${HIGHLIGHT.transition}`
+    }
+
+    targetElement.value.classList.add(HIGHLIGHT.classes.targetHighlighted)
+    // The element must have a position, if it doesn't have one, add a relative position class
+    if (!targetElement.value.style.position) {
+      targetElement.value.classList.add(HIGHLIGHT.classes.targetRelative)
+    }
+  } else {
+    document.body.classList.remove(HIGHLIGHT.classes.active)
+  }
+}
+
+const removeHighlight = () => {
+  if (isHighlightEnabled()) {
+    const target = targetElement.value
+    const currentTransition = targetElement.value?.style.transition
+    targetElement.value?.classList.remove(HIGHLIGHT.classes.targetHighlighted)
+    targetElement.value?.classList.remove(HIGHLIGHT.classes.targetRelative)
+    // Remove our transition when step is finished.
+    if (target && currentTransition?.includes(HIGHLIGHT.transition)) {
+      setTimeout(() => {
+        target.style.transition = currentTransition.replace(`, ${HIGHLIGHT.transition}`, '')
+      }, 0)
+    }
+  }
+}
+
+const isButtonEnabled = (name: ButtonName) => {
+  return params.value.enabledButtons.hasOwnProperty(name) ? params.value.enabledButtons[name] : true;
+}
+
+const getOffset = (jumpOptions: { offset?: number }) => {
+  if (!targetElement.value) {
+    console.error('[Vue Tour] Target element not found for offset calculation.');
+    return 0;
+  }
+  const elemRect = targetElement.value.getBoundingClientRect();
+  let offset = elemRect.top;
+  if (jumpOptions.offset) {
+    offset += jumpOptions.offset;
+  }
+  return offset;
+}
+
+const getIonContent = () => {
+  const pages = document.getElementsByClassName('ion-page');
+  if (pages.length) {
+    const elByZIndexes: Record<string, HTMLElement> = {};
+    for (const el of pages) {
+      const styles = window.getComputedStyle(el);
+      const zIndex = styles.zIndex;
+      elByZIndexes[zIndex] = el.querySelector('ion-content') as HTMLElement;
+    }
+
+    const maxZIndex = Math.max(...Object.keys(elByZIndexes).map(value => +value));
+    return { el: elByZIndexes[maxZIndex], pages: Object.keys(elByZIndexes).length };
+  }
+
+  return null;
+}
+
+const ionicScroll = (jumpOptions: { offset?: number, duration?: number }) => {
+  const offset = getOffset(jumpOptions);
+  const ionContent = getIonContent();
+  if (ionContent) {
+    (ionContent.el as HTMLElement & { scrollByPoint: (basePoint: number, offset: number, duration: number) => void }).scrollByPoint(0, offset, jumpOptions.duration || 1000);
+  } else {
+    console.error('[Vue Tour] No Ion Content found for scrolling.');
+  }
+}
+
+onMounted(() => {
+  console.log('[Vue Tour] Creating step for .v-step[id="' + hash.value + '"] targeting ' + props.step.target);
+  nextTick(() => {
+    createStep()
+  })
+})
+
+onUnmounted(() => {
+  removeHighlight()
+})
+
+const skip = () => {
+  props.stop()
+}
+
+const finish = () => {
+  props.stop()
+}
+
+defineExpose([skip, finish]);
+
+const emit = defineEmits(['targetNotFound']);
+
 </script>
 
 <style lang="scss" scoped>

@@ -1,13 +1,16 @@
-export const DEFAULT_CALLBACKS = {
+import {Callbacks, Options, Step} from "../shared/types";
+import {Placement} from "@popperjs/core/lib/enums";
+
+export const DEFAULT_CALLBACKS: Callbacks = {
   onStart: () => {},
-  onPreviousStep: (currentStep) => {},
-  onNextStep: (currentStep) => {},
+  onPreviousStep: (currentStep: Step) => {},
+  onNextStep: (currentStep: Step) => {},
   onStop: () => {},
   onSkip: () => {},
   onFinish: () => {}
 }
 
-export const DEFAULT_OPTIONS = {
+export const DEFAULT_OPTIONS: Options = {
   highlight: false,
   labels: {
     buttonSkip: 'Skip tour',
@@ -67,7 +70,7 @@ export const DEFAULT_STEP_OPTIONS = {
       }
     }
   ],
-  placement: 'bottom'
+  placement: "bottom" as Placement,
 }
 
 export const KEYS = {
