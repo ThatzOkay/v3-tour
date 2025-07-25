@@ -1,6 +1,6 @@
 {
   "name": "@thatzokay/v3-tour",
-  "version": "4.0.1",
+  "version": "4.0.3",
   "description": "v3-tour is a lightweight, simple and customizable tour plugin for use with Vue.js. It provides a quick and easy way to guide your users through your application.",
   "author": "ThatzOkay <noduhgamingxd@gmail.com>",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/ThatzOkay/v3-tour.git"
   },
-  "typings": "dist/types/index.d.ts",
+  "typings": "dist/types/main.d.ts",
   "keywords": [
     "vue",
     "tour"
@@ -41,7 +41,7 @@
     "@vue/tsconfig": "^0.7.0",
     "core-js": "^3.44.0",
     "cross-env": "^7.0.3",
-    "eslint": "^9.30.1",
+    "eslint": "^9.31.0",
     "eslint-plugin-vue": "^10.3.0",
     "globals": "^16.3.0",
     "rimraf": "^6.0.1",
@@ -49,8 +49,8 @@
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
     "typescript-eslint": "^8.38.0",
-    "vite": "^7.0.4",
-    "vue": "^3.5.17",
-    "vue-tsc": "^3.0.1"
+    "vite": "^7.0.6",
+    "vue": "^3.5.18",
+    "vue-tsc": "^3.0.4"
   }
 }

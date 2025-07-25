@@ -15,7 +15,7 @@
 You can install `v3-tour` using npm or by downloading the minified build on GitHub.
 
 ```
-npm install v3-tour
+npm i @thatzokay/v3-tour
 ```
 
 Then import the plugin in your application entry point (typically main.ts if you used vue-cli to scaffold your project) and tell Vue to use it.
@@ -24,9 +24,9 @@ Also don't forget to include the styles. You can add the styles provided by defa
 ```javascript
 import { createApp } from 'vue'
 import App from './App.vue'
-import VueTour from 'v3-tour'
+import VueTour from '@thatzokay/v3-tour'
 
-import 'v3-tour/dist/vue-tour.css' // css for this library
+import '@thatzokay/v3-tour/dist/vue-tour.css' // css for this library
 
 const app = createApp(App)
 
@@ -101,7 +101,7 @@ Once this is done and your steps correctly target some DOM elements of your appl
   }
 ```
 
-For the precursor to `v3-tour`, checkout the [docs for vue-tour](https://github.com/pulsardev/vue-tour/wiki).
+For the precursor to `v3-tour`, checkout the [docs for vue-tour](https://github.com/ThatzOkay/v3-tour/wiki).
 
 ## `before()` UI step functions
 
@@ -381,4 +381,4 @@ By default the shadow is a solid thin box-shadow. If you want to have a full bac
 
 ## Something Missing?
 
-If you have a feature request or found a bug, [let us know](https://github.com/Sitronik/v3-tour/issues) by submitting an issue.
+If you have a feature request or found a bug, [let us know](https://github.com/ThatzOkay/v3-tour/issues) by submitting an issue.

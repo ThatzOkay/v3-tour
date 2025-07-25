@@ -1,6 +1,6 @@
 export type Step = {
   before?: (smt: string) => Promise<void>;
-  target: string | Element | null;
+  target?: string | Element;
   header?: {
     title: string;
   },

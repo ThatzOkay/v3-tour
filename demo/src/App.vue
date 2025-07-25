@@ -183,6 +183,8 @@ const version = '3.0.0';
 
 const steps: Step[] = [
   {
+  },
+  {
     target: '#v-step-0',
     content: `Discover <strong>Vue Tour</strong>!`,
     params: {
