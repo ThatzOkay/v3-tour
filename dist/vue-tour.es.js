@@ -1134,7 +1134,7 @@ const Xr = ["id"], Kr = {
     }, g = () => {
       o.stop();
     };
-    t([h, g]);
+    t({ skip: h, finish: g });
     const S = r;
     return (p, y) => (H(), V("div", {
       class: et([{ "v-step--sticky": c.value }, "v-step"]),
@@ -1202,7 +1202,7 @@ const Xr = ["id"], Kr = {
   for (const [o, n] of t)
     r[o] = n;
   return r;
-}, kt = /* @__PURE__ */ ro(to, [["__scopeId", "data-v-c5f7ce11"]]), oo = { class: "v-tour" }, no = /* @__PURE__ */ ft({
+}, kt = /* @__PURE__ */ ro(to, [["__scopeId", "data-v-f4f6baf8"]]), oo = { class: "v-tour" }, no = /* @__PURE__ */ ft({
   __name: "VTour",
   props: {
     steps: {},

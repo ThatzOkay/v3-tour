@@ -33,7 +33,10 @@ type __VLS_Slots = {} & {
 } & {
     actions?: (props: typeof __VLS_5) => any;
 };
-declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, (() => void)[], {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
+declare const __VLS_component: import("vue").DefineComponent<__VLS_Props, {
+    skip: () => void;
+    finish: () => void;
+}, {}, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     targetNotFound: (...args: any[]) => void;
 }, string, import("vue").PublicProps, Readonly<__VLS_Props> & Readonly<{
     onTargetNotFound?: ((...args: any[]) => any) | undefined;
