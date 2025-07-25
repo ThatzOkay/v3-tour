@@ -248,7 +248,7 @@ const finish = () => {
   props.stop()
 }
 
-defineExpose([skip, finish]);
+defineExpose({skip, finish});
 
 const emit = defineEmits(['targetNotFound']);
 
