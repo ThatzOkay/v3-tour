@@ -1,16 +1,16 @@
 {
   "name": "@thatzokay/v3-tour",
-  "version": "4.0.3",
+  "version": "4.0.5",
   "description": "v3-tour is a lightweight, simple and customizable tour plugin for use with Vue.js. It provides a quick and easy way to guide your users through your application.",
   "author": "ThatzOkay <noduhgamingxd@gmail.com>",
   "license": "MIT",
-  "main": "dist/v3-tour.es.js",
-  "module": "dist/v3-tour.umd.js",
+  "main": "dist/vue-tour.umd.js",
+  "module": "dist/vue-tour.es.js",
+  "typings": "dist/types/main.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ThatzOkay/v3-tour.git"
   },
-  "typings": "dist/types/main.d.ts",
   "keywords": [
     "vue",
     "tour"

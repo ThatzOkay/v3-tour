@@ -8,7 +8,7 @@ export * from './shared/constants'
 export * from './composables/useTour'
 export * from './components'
 
-export const VueTour: Plugin = {
+const VueTour: Plugin = {
   install (app: App, options: object) {
     if (!options) {
       options = {}
@@ -20,3 +20,5 @@ export const VueTour: Plugin = {
     app.config.globalProperties.$tours = {}
   }
 }
+
+export { VueTour }
