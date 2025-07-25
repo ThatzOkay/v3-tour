@@ -1,20 +1,22 @@
 export type Step = {
     before?: (smt: string) => Promise<void>;
-    target: string | Element | null;
-    header: {
+    target?: string | Element;
+    header?: {
         title: string;
     };
-    content: string;
+    content?: string;
     params?: {
+        highlight?: boolean;
         duration?: number;
         offset?: number;
         enableScrolling?: boolean;
+        placement?: 'top' | 'bottom' | 'left' | 'right';
     };
 };
 export type Callbacks = {
     onStart?: () => void;
-    onPreviousStep?: (currentStep: Step) => void;
-    onNextStep?: (currentStep: Step) => void;
+    onPreviousStep?: (currentStep: number) => void;
+    onNextStep?: (currentStep: number) => void;
     onStop?: () => void;
     onSkip?: () => void;
     onFinish?: () => void;

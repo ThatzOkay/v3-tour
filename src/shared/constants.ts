@@ -3,8 +3,8 @@ import {Placement} from "@popperjs/core/lib/enums";
 
 export const DEFAULT_CALLBACKS: Callbacks = {
   onStart: () => {},
-  onPreviousStep: (currentStep: Step) => {},
-  onNextStep: (currentStep: Step) => {},
+  onPreviousStep: (currentStep: number) => {},
+  onNextStep: (currentStep: number) => {},
   onStop: () => {},
   onSkip: () => {},
   onFinish: () => {}

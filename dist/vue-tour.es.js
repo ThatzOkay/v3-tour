@@ -1165,7 +1165,7 @@ const Xr = ["id"], Kr = {
             key: 0,
             onClick: ke(h, ["prevent"]),
             class: "v-step__button v-step__button-skip"
-          }, oe(i.value.labels.buttonSkip), 1)) : J("", !0),
+          }, oe(i.value.labels?.buttonSkip), 1)) : J("", !0),
           !p.isFirst && m("buttonPrevious") ? (H(), V("button", {
             key: 1,
             onClick: y[0] || (y[0] = ke(
@@ -1174,7 +1174,7 @@ const Xr = ["id"], Kr = {
               ["prevent"]
             )),
             class: "v-step__button v-step__button-previous"
-          }, oe(i.value.labels.buttonPrevious), 1)) : J("", !0),
+          }, oe(i.value.labels?.buttonPrevious), 1)) : J("", !0),
           !p.isLast && m("buttonNext") ? (H(), V("button", {
             key: 2,
             onClick: y[1] || (y[1] = ke(
@@ -1183,12 +1183,12 @@ const Xr = ["id"], Kr = {
               ["prevent"]
             )),
             class: "v-step__button v-step__button-next"
-          }, oe(i.value.labels.buttonNext), 1)) : J("", !0),
+          }, oe(i.value.labels?.buttonNext), 1)) : J("", !0),
           p.isLast && m("buttonStop") ? (H(), V("button", {
             key: 3,
             onClick: ke(g, ["prevent"]),
             class: "v-step__button v-step__button-stop"
-          }, oe(i.value.labels.buttonStop), 1)) : J("", !0)
+          }, oe(i.value.labels?.buttonStop), 1)) : J("", !0)
         ])
       ], !0),
       De("div", {
@@ -1202,7 +1202,7 @@ const Xr = ["id"], Kr = {
   for (const [o, n] of t)
     r[o] = n;
   return r;
-}, kt = /* @__PURE__ */ ro(to, [["__scopeId", "data-v-16772b58"]]), oo = { class: "v-tour" }, no = /* @__PURE__ */ ft({
+}, kt = /* @__PURE__ */ ro(to, [["__scopeId", "data-v-c5f7ce11"]]), oo = { class: "v-tour" }, no = /* @__PURE__ */ ft({
   __name: "VTour",
   props: {
     steps: {},
@@ -1256,7 +1256,7 @@ const Xr = ["id"], Kr = {
     }, l = async () => {
       let f = o.value - 1;
       const v = () => new Promise((h) => {
-        a.value.onPreviousStep && a.value.onPreviousStep(r.steps[o.value]), o.value = f, h();
+        a.value.onPreviousStep && a.value.onPreviousStep(o.value), o.value = f, h();
       });
       if (f > -1) {
         let h = r.steps[f];
@@ -1272,7 +1272,7 @@ const Xr = ["id"], Kr = {
     }, w = async () => {
       let f = o.value + 1;
       const v = () => new Promise((h) => {
-        a.value.onNextStep && a.value.onNextStep(r.steps[o.value]), o.value = f, h();
+        a.value.onNextStep && a.value.onNextStep(o.value), o.value = f, h();
       });
       if (f < s.value && o.value !== -1) {
         let h = r.steps[f];

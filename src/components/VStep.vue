@@ -30,19 +30,9 @@
 import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import {DEFAULT_STEP_OPTIONS, HIGHLIGHT} from "../shared/constants";
 import jump from 'jump.js'
-import {
-  autoPlacement,
-  autoUpdate,
-  computePosition, flip,
-  offset,
-  shift,
-  useFloating,
-  UseFloatingOptions
-} from "@floating-ui/vue";
 import {ButtonName} from "../shared/types";
 import {Step} from "../shared/types";
 import {createPopper} from "@popperjs/core";
-import {Placement} from "@popperjs/core/lib/enums";
 
 const props = defineProps<{
   step: Step,
